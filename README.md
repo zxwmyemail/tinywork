@@ -1,5 +1,4 @@
 ZxwFramework - 基于MVC的php框架
----
 
 > - 作者： iProg
 > - 日期： 2015-01-12
@@ -9,7 +8,6 @@ ZxwFramework - 基于MVC的php框架
 
 
 框架相关说明 - 轻量级、易使用
----
 
 一、系统目录和主要文件如下：
 ```php
@@ -73,6 +71,3 @@ ZxwFramework - 基于MVC的php框架
     (1) http://localhost/bootstrap/index.php?r=home.index&id=2
     (2) http://localhost/bootstrap/index.php/controller/action/?id=2  
 ```
-
-
-
