@@ -105,7 +105,7 @@ final class Application {
 
         if($action && method_exists($controller, $action)){
             $params = empty($url_array['params']) ? '' : $url_array['params'];
-            isset($params) ? $controller ->$action($params) : $controller ->$action();
+            isset($params) ? $controller->$action($params) : $controller->$action();
         } else {
             trigger_error('无效路由参数，无法访问!');
         }
@@ -119,14 +119,10 @@ final class Application {
         $_reqParams = self::$_reqParams;
         $routeConf = self::$_config['route'];
 
-        $module = empty($_reqParams['module']) ? $routeConf['default_module'] : $_reqParams['module'];
-        $controller = empty($_reqParams['controller']) ? $routeConf['default_controller']: $_reqParams['controller'];
-        $action = empty($_reqParams['action']) ? $routeConf['default_action']: $_reqParams['action'];
-
         return [
-            'module'     => $module,
-            'controller' => $controller,
-            'action'     => $action,
+            'module'     => empty($_reqParams['module']) ? $routeConf['default_module'] : $_reqParams['module'],
+            'controller' => empty($_reqParams['controller']) ? $routeConf['default_controller']: $_reqParams['controller'],
+            'action'     => empty($_reqParams['action']) ? $routeConf['default_action']: $_reqParams['action'],
         ];
     }
     
@@ -150,17 +146,16 @@ final class Application {
     | 防止sql注入和xss攻击
     ---------------------------------------------------------------------------------------*/
     public static function daddslashes($data, $ignore_magic_quotes = true) {
-        if(is_string($data)) {
-            $data = self::cleanXss($data, true);      //防止被挂马，跨站攻击
-            if(($ignore_magic_quotes == true) || (!get_magic_quotes_gpc())) {
-                $data = addslashes($data);            //防止sql注入
+        if(is_string($data)) {   //防止被挂马，跨站攻击
+            $data = self::cleanXss($data, true);      
+            if(($ignore_magic_quotes == true) || (!get_magic_quotes_gpc())) {  //防止sql注入
+                $data = addslashes($data);            
             }
         } else if(is_array($data)) {
             foreach($data as $key => $value) {
                 $data[$key] = self::daddslashes($value, $ignore_magic_quotes);
             }
         }
-        
         return $data;
     }
 
