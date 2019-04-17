@@ -58,20 +58,17 @@ class Probe {
 
     public function getPluginParam(){
         $zend_version = zend_version();
-        $plugin_ioncube = '';
+        $plugin_ioncube = '<font color=red>×</font>';
         if(extension_loaded('ionCube Loader')){   
             $ys = ioncube_loader_iversion();   
             $gm = ".".(int)substr($ys,3,2);   
             $plugin_ioncube = ionCube_Loader_version().$gm;
-        } else {
-            $plugin_ioncube = "<font color=red>×</font>";
-        }
-        $plugin_gd = '';
+        } 
+
+        $plugin_gd = '<font color="red">×</font>';
         if(function_exists('gd_info')) {
             $gd_info = @gd_info();
             $plugin_gd = $gd_info["GD Version"];
-        } else {
-            $plugin_gd = '<font color="red">×</font>';
         }
         return array(
             'plugin_zend_version'        => empty($zend_version) ? '<font color=red>×</font>' : $zend_version,
@@ -99,9 +96,8 @@ class Probe {
         );
     }
 
-    private function valueIsOk($varName){
-        switch($result = get_cfg_var($varName))
-        {
+    private function valueIsOk($varName) {
+        switch($result = get_cfg_var($varName)) {
             case 0:
                 return '<font color="red">×</font>';
                 break;
