@@ -2,7 +2,6 @@
 namespace app\mvc\model;
 
 class Probe {
-
     public function getServerParam(){
         $os = explode(" ", php_uname());
         return array(
