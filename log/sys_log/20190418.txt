@@ -1,0 +1,2 @@
+[18-Apr-2019 09:51:30 Asia/Shanghai] PHP Recoverable fatal error:  Object of class app\mvc\controller\homeModule\homeController could not be converted to string in D:\phpStudy\PHPTutorial\WWW\tinywork\system\Application.php on line 114
+[18-Apr-2019 09:56:36 Asia/Shanghai] [2019-04-18 09:56:36][ERROR] 无效路由:m=home&r=home.ddd

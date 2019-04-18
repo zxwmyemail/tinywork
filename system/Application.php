@@ -7,6 +7,7 @@ namespace app\system;
  * @version     1.0
  ********************************************************************************************/
 use app\system\core\Route;
+use app\system\library\Log;
 
 final class Application {
 
@@ -52,7 +53,8 @@ final class Application {
         if (file_exists($filePath)) {
             require_once($filePath); 
         } else {
-            trigger_error('加载 ' . $filePath . ' 类库不存在'); die(); 
+            error_log('[' . date('Y-m-d H:i:s') . '][ERROR] 加载 ' . $filePath . ' 类库不存在');
+            header('Location: index.php?m=home&r=home.page404');
         } 
     }
 
@@ -107,6 +109,8 @@ final class Application {
             $params = empty($url_array['params']) ? '' : $url_array['params'];
             isset($params) ? $controller->$action($params) : $controller->$action();
         } else {
+            $errMsg = '无效路由:m=' . $routeInfo['module'] . '&r=' . $routeInfo['controller'] . '.' . $routeInfo['action'];
+            error_log('[' . date('Y-m-d H:i:s') . '][ERROR] ' . $errMsg);
             header('Location: index.php?m=home&r=home.page404');
         }
         exit(0);
