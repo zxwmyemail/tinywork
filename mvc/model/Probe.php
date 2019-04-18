@@ -4,11 +4,13 @@ namespace app\mvc\model;
 class Probe {
     public function getServerParam(){
         $os = explode(" ", php_uname());
+        $isWin = strtoupper(substr(PHP_OS, 0, 3)) == 'WIN' ? true : false; 
+        $ipAddress = $isWin ? @gethostbyname($_SERVER['SERVER_NAME']) : $_SERVER['SERVER_ADDR'];
         return array(
-            'server_domain'          => $_SERVER['SERVER_NAME']. "(" .('/'==DIRECTORY_SEPARATOR ? $_SERVER['SERVER_ADDR']: @gethostbyname($_SERVER['SERVER_NAME'])) .")",
-            'server_operate_system'  => $os[0] . '&nbsp;内核版本：'.('/'==DIRECTORY_SEPARATOR ? $os[2] : $os[1]),
+            'server_domain'          => $_SERVER['SERVER_NAME'] . "(" . $ipAddress .")",
+            'server_operate_system'  => $os[0] . ' 内核版本：' . ($isWin ? $os[1] : $os[2]),
             'server_engine'          => $_SERVER['SERVER_SOFTWARE'],
-            'server_hostname'        => '/'== DIRECTORY_SEPARATOR ? $os[1] : $os[2],
+            'server_hostname'        => $isWin ? $os[2] : $os[1],
             'server_flag'            => @php_uname(),
             'server_port'            => $_SERVER['SERVER_PORT'],
         );
@@ -91,20 +93,18 @@ class Probe {
     private function getDisableFun()
     {
         $result = '';
-        $disFuns=get_cfg_var("disable_functions");
+        $disFuns = get_cfg_var("disable_functions");
         if(empty($disFuns)) {
             $result = '<font color=red>无</font>';
         } else { 
             $disFuns_array =  explode(',',$disFuns);
-            foreach ($disFuns_array as $key => $value) 
-            {
-                if ($key!=0 && $key%5==0) {
+            foreach ($disFuns_array as $key => $value) {
+                if ($key != 0 && $key%5 == 0) {
                     $result .= '<br />';
                 }
                 $result .= "$value&nbsp;&nbsp;";
             }   
         }
-
         return $result;
     } 
 }
