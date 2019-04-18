@@ -107,7 +107,7 @@ final class Application {
             $params = empty($url_array['params']) ? '' : $url_array['params'];
             isset($params) ? $controller->$action($params) : $controller->$action();
         } else {
-            trigger_error('无效路由参数，无法访问!');
+            header('Location: index.php?m=home&r=home.page404');
         }
         exit(0);
     }

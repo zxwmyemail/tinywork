@@ -12,8 +12,8 @@
 | 参数说明
 | db_conn   数据库连接表示，1为长久链接，0为即时链接
 -------------------------------------------------------------------------------------------*/
-$_CONFIG['system']['mysql'] = array(
-    'master' => array(
+$_CONFIG['system']['mysql'] = [
+    'master' => [
         'db_host'          => 'localhost',
         'db_user'          => 'root',
         'db_port'          => '3306',
@@ -22,8 +22,8 @@ $_CONFIG['system']['mysql'] = array(
         'db_table_prefix'  => 'app_',
         'db_charset'       => 'utf8',
         'db_conn'          => 0
-    ),
-    'slave'  => array(
+    ],
+    'slave'  => [
         'db_host'          => 'localhost',
         'db_user'          => 'root',
         'db_port'          => '3306',
@@ -32,8 +32,8 @@ $_CONFIG['system']['mysql'] = array(
         'db_table_prefix'  => 'app_',
         'db_charset'       => 'utf8',
         'db_conn'          => 0
-    )
-);
+    ]
+];
 
 
 /*-------------------------------------------------------------------------------------------
@@ -46,12 +46,12 @@ $_CONFIG['system']['mysql'] = array(
 |                       1为普通模式   index.php?r=controller.action&id=2
 |                       2为PATHINFO   index.php/controller/action/?id=2
 --------------------------------------------------------------------------------------------*/
-$_CONFIG['system']['route'] = array(
+$_CONFIG['system']['route'] = [
     'default_module'     => 'home',
     'default_controller' => 'home', 
     'default_action'     => 'index', 
     'url_type'           => 1                                                                           
-);
+];
 
 
 /*------------------------------------------------------------------------------------------
@@ -62,18 +62,18 @@ $_CONFIG['system']['route'] = array(
 | 2.auth             主机授权密码
 | 3.port             端口号
 ------------------------------------------------------------------------------------------*/
-$_CONFIG['system']['redis'] = array(
-    'master' => array(
+$_CONFIG['system']['redis'] = [
+    'master' => [
         'host'=>'127.0.0.1',
         'port'=>'6379',
         'auth'=>'',
-    ),
-    'slave' => array(
+    ],
+    'slave' => [
         'host'=>'127.0.0.1',
         'port'=>'6379',
         'auth'=>'',
-    )
-);
+    ]
+];
 
 
 /*------------------------------------------------------------------------------------------
@@ -89,16 +89,16 @@ $_CONFIG['system']['redis'] = array(
 | 7.thresavings        指定经过压缩实际存储的值的压缩率，支持的值必须在0和1之间。
 |                      默认值是0.2表示20%压缩率。
 -------------------------------------------------------------------------------------------*/
-$_CONFIG['system']['memcache'] = array(
-    'server' => array(
-        array('host' => '127.0.0.1', 'port' => '11211', 'weight' => 1),
-        array('host' => '127.0.0.1', 'port' => '11211', 'weight' => 1)
-    ),
+$_CONFIG['system']['memcache'] = [
+    'server' => [
+        ['host' => '127.0.0.1', 'port' => '11211', 'weight' => 1],
+        ['host' => '127.0.0.1', 'port' => '11211', 'weight' => 1]
+    ],
     'expiration'    =>  18600, 
     'prefix'        =>  'zxw_', 
     'compression'   =>  false,
     'isAutoTresh'   =>  true,
     'threshold'     =>  20000, 
     'thresavings'   =>  0.2 
-);
+];
 
