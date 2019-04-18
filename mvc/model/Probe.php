@@ -2,7 +2,11 @@
 namespace app\mvc\model;
 
 class Probe {
-    public function getServerParam(){
+
+    private $ok = '<font style="color:green;">√</font>';
+    private $no = '<font style="color:red;">×</font>';
+
+    public function getServerParam() {
         $os = explode(" ", php_uname());
         $isWin = strtoupper(substr(PHP_OS, 0, 3)) == 'WIN' ? true : false; 
         $ipAddress = $isWin ? @gethostbyname($_SERVER['SERVER_NAME']) : $_SERVER['SERVER_ADDR'];
@@ -16,10 +20,10 @@ class Probe {
         );
     }
 
-    public function getPhpParam(){
+    public function getPhpParam() {
         $zend_version = zend_version();
         return array(
-            'plugin_zend_version'        => empty($zend_version) ? '<font color=red>×</font>' : $zend_version,
+            'plugin_zend_version'        => empty($zend_version) ? $this->no : $zend_version,
             'php_version'                => PHP_VERSION,
             'php_sapi_name'              => strtoupper(php_sapi_name()),
             'php_memory_limit'           => $this->valueIsOk("memory_limit"),
@@ -42,21 +46,21 @@ class Probe {
         );
     }
 
-    public function getPluginParam(){
-        $plugin_gd = '<font color="red">×</font>';
+    public function getPluginParam() {
+        $plugin_gd = $this->no;
         if(function_exists('gd_info')) {
             $gd_info = @gd_info();
             $plugin_gd = $gd_info["GD Version"];
         }
         return array(
-            'plugin_eAccelerator'        => (phpversion('eAccelerator'))!='' ? phpversion('eAccelerator') : "<font color=red>×</font>",
-            'plugin_XCache'              => (phpversion('XCache'))!='' ? phpversion('XCache') : "<font color=red>×</font>",
+            'plugin_eAccelerator'        => (phpversion('eAccelerator'))!='' ? phpversion('eAccelerator') : $this->no,
+            'plugin_XCache'              => (phpversion('XCache'))!='' ? phpversion('XCache') : $this->no,
             'plugin_ftp_login'           => $this->isfun("ftp_login"),
             'plugin_xml_set_object'      => $this->isfun("xml_set_object"),
             'plugin_session_start'       => $this->isfun("session_start"),
-            'php_cookie'                 => isset($_COOKIE)?'<font color="green">√</font>' : '<font color="red">×</font>',
+            'php_cookie'                 => isset($_COOKIE) ? $this->ok : $this->no,
             'plugin_socket_accept'       => $this->isfun("socket_accept"),
-            'php_smtp'                   => get_cfg_var("SMTP")?'<font color="green">√</font>' : '<font color="red">×</font>',
+            'php_smtp'                   => get_cfg_var("SMTP") ? $this->ok : $this->no,
             'plugin_gd'                  => $plugin_gd,
             'php_curl_init'              => $this->isfun("curl_init"),
             'plugin_gzclose'             => $this->isfun("gzclose"),
@@ -73,10 +77,10 @@ class Probe {
     private function valueIsOk($varName) {
         switch($result = get_cfg_var($varName)) {
             case 0:
-                return '<font color="red">×</font>';
+                return $this->no;
                 break;
             case 1:
-                return '<font color="green">√</font>';
+                return $this->ok;
                 break;
             default:
                 return $result;
@@ -87,7 +91,7 @@ class Probe {
     private function isfun($funName = '')
     {
         if (!$funName || trim($funName) == '' || preg_match('~[^a-z0-9\_]+~i', $funName, $tmp)) return '错误';
-        return (false !== function_exists($funName)) ? '<font color="green">√</font>' : '<font color="red">×</font>';
+        return (false !== function_exists($funName)) ? $this->ok : $this->no;
     } 
 
     private function getDisableFun()
