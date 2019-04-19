@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.21-dev, created on 2019-04-19 11:44:02
+<?php /* Smarty version Smarty-3.1.21-dev, created on 2019-04-19 11:52:41
          compiled from "D:\phpStudy\PHPTutorial\WWW\tinywork\mvc\view\homeModule\home\404Page.html" */ ?>
 <?php /*%%SmartyHeaderCode:17540123525cb7d6b03dccb6-44044340%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '5b3057cc107b1aaee962571271dbe13447599f80' => 
     array (
       0 => 'D:\\phpStudy\\PHPTutorial\\WWW\\tinywork\\mvc\\view\\homeModule\\home\\404Page.html',
-      1 => 1555553731,
+      1 => 1555645960,
       2 => 'file',
     ),
   ),
@@ -33,7 +33,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
 			<h1>404</h1>  
 			<h3>大事不妙啦！</h3>  
 			<p>你访问的页面好像不小心被火星人劫走了~</p>  
-			<a href="index.php">返回首页 ></a>  
+			<a href="index.php">返回首页 ?</a>  
 		</div>  
 	</body>  
 </html>
