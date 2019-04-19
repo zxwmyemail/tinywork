@@ -165,26 +165,36 @@ class BaseRedis
     /*-------------------------------------------------------------------------------------
     | hash设置数据 (不设置过期时间)
     |--------------------------------------------------------------------------------------
-    | @param string $hash hash值
-    | @param string $key 键名
+    | @param string $hashKey key值
+    | @param string $field 字段
     | @param string $value 值
     -------------------------------------------------------------------------------------*/  
-    public function hset($hash, $key, $value) {  
-        return $this->_redis->hset($hash, $key, json_encode($value, JSON_UNESCAPED_UNICODE));  
+    public function hset($hashKey, $field, $value) {  
+        return $this->_redis->hset($hashKey, $field, json_encode($value, JSON_UNESCAPED_UNICODE));  
     }
 
     /*-------------------------------------------------------------------------------------
     | 获取一个hash的key数据
     |--------------------------------------------------------------------------------------
-    | @param string $hash hash值
-    | @param string $key 键名
+    | @param string $hashKey key值
+    | @param string $field 字段
     -------------------------------------------------------------------------------------*/  
-    public function hget($hash, $key) { 
-        $ret =  $this->_redis->hget($hash, $key); 
+    public function hget($hashKey, $field) { 
+        $ret =  $this->_redis->hget($hashKey, $field); 
         if ($ret) {
             return json_decode($ret, true);
         }
         return false; 
+    }
+
+    /*-------------------------------------------------------------------------------------
+    | 获取一个hash的key数据
+    |--------------------------------------------------------------------------------------
+    | @param string $hashKey key值
+    | @param string $key 键名
+    -------------------------------------------------------------------------------------*/  
+    public function hgetall($hashKey) { 
+        return $this->_redis->hgetall($hashKey); 
     }
 
     /*-------------------------------------------------------------------------------------
