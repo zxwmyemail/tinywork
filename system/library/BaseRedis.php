@@ -174,7 +174,7 @@ class BaseRedis
     | @param string $value 值
     -------------------------------------------------------------------------------------*/  
     public function hset($hashKey, $field, $value) {  
-        return $this->_redis->hset($hashKey, $field, json_encode($value, JSON_UNESCAPED_UNICODE));  
+        return $this->_redis->hset($hashKey, $field, $value);  
     }
 
     /*-------------------------------------------------------------------------------------
@@ -184,11 +184,7 @@ class BaseRedis
     | @param string $field 字段
     -------------------------------------------------------------------------------------*/  
     public function hget($hashKey, $field) { 
-        $ret =  $this->_redis->hget($hashKey, $field); 
-        if ($ret) {
-            return json_decode($ret, true);
-        }
-        return false; 
+        return $this->_redis->hget($hashKey, $field);
     }
 
     /*-------------------------------------------------------------------------------------
