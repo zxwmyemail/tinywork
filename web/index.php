@@ -8,14 +8,16 @@
  
 define('BASE_PATH', dirname(dirname(__FILE__)));
 
+define('DS', DIRECTORY_SEPARATOR);
+
 //加载系统常量
-require BASE_PATH . '/config/const.config.php';
+require BASE_PATH . DS . 'config' . DS . 'const.config.php';
 
 //加载系统配置参数
-require BASE_PATH . '/config/params.config.php';
+require BASE_PATH . DS . 'config' . DS . 'params.config.php';
 
 //加载核心文件
-require BASE_PATH . '/system/Application.php';
+require BASE_PATH . DS . 'system' . DS . 'Application.php';
 
 //启动应用
 app\system\Application::run($_CONFIG);
