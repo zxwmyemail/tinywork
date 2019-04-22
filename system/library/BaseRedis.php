@@ -184,7 +184,7 @@ class BaseRedis
     | @param string $field 字段
     -------------------------------------------------------------------------------------*/  
     public function hget($hashKey, $field) { 
-        return $this->_redis->hget($hashKey, $field);
+        return $this->_redis->hget($hashKey, $field); 
     }
 
     /*-------------------------------------------------------------------------------------
@@ -198,29 +198,23 @@ class BaseRedis
     }
 
     /*-------------------------------------------------------------------------------------
+    | hash设置数据 (不设置过期时间)
+    |--------------------------------------------------------------------------------------
+    | @param string $hashKey key值
+    | @param string $kv      键值数组 ['field1' => 1, 'field2' => 2, 'field13' => 3]
+    -------------------------------------------------------------------------------------*/  
+    public function hmset($hashKey, $kv) {  
+        return $this->_redis->hset($hashKey, $field, $value);  
+    }
+
+    /*-------------------------------------------------------------------------------------
     | 批量获取数据 
     |--------------------------------------------------------------------------------------
-    | @param string $hash hash值
-    | @param string $keys 键数组
+    | @param string $key key值
+    | @param string $fields [field1, field2, field13]
     -------------------------------------------------------------------------------------*/  
-    public function hmget($hash, $keys) {  
-        $list = $this->_redis->hmget($hash, $keys);  
-        $ret = $no_exist_keys = $ok_exist_keys = array();
-
-        foreach ($list as $key => $value) {
-            if ($value) {
-                $ret[] = json_decode($value, true);
-                $ok_exist_keys[] = $keys[$key];
-            } else {
-                $no_exist_keys[] = $keys[$key];
-            }
-        }
-
-        return array(
-            'ok_exist' => $ret,
-            'no_exist_keys' => $no_exist_keys,
-            'ok_exist_keys' => $ok_exist_keys
-        );  
+    public function hmget($key, $fields) {  
+        return $this->_redis->hmget($key, $fields);  
     }
 
     /*-------------------------------------------------------------------------------------
@@ -240,44 +234,25 @@ class BaseRedis
     | @param string $value 值
     -------------------------------------------------------------------------------------*/  
     public function set($key, $value) {  
-        return $this->_redis->set($key, json_encode($value, JSON_UNESCAPED_UNICODE));  
+        return $this->_redis->set($key, $value);  
     }
 
     /*-------------------------------------------------------------------------------------
     | 获取数据
     |--------------------------------------------------------------------------------------
-    | @param string $key 键名
+    | @param string $key 键名 
     -------------------------------------------------------------------------------------*/  
     public function get($key) {  
-        $ret = $this->_redis->get($key);
-        if ($ret) {
-            return json_decode($ret, true);
-        }
-        return false; 
+        return $this->_redis->get($key);
     }
 
     /*-------------------------------------------------------------------------------------
     | 批量获取数据 
     |--------------------------------------------------------------------------------------
-    | @param string $keys 键数组
+    | @param string $keys 键数组 [field1, field2, field13]
     -------------------------------------------------------------------------------------*/  
     public function mget($keys) {  
-        $list = $this->_redis->mget($keys);  
-        $ret = $no_exist_keys = $ok_exist_keys = array();
-
-        foreach ($list as $key => $value) {
-            if ($value) {
-                $ret[] = json_decode($value, true);
-                $ok_exist_keys[] = $keys[$key];
-            } else {
-                $no_exist_keys[] = $keys[$key];
-            }
-        }
-        return array(
-            'ok_exist' => $ret,
-            'no_exist_keys' => $no_exist_keys,
-            'ok_exist_keys' => $ok_exist_keys,
-        );  
+        return $this->_redis->mget($keys); 
     }
 
     /*-------------------------------------------------------------------------------------
