@@ -25,7 +25,7 @@ class Log {
         if (!is_dir($logDir)) 
             mkdir($logDir, 0777, true); 
 
-        $logFile = $logDir . date('Y-m-d') . '.txt';
+        $logFile = $logDir . date('Y-m-d') . '.log';
         $this->LogFile = @fopen($logFile,'a+');
 
         if (!is_writable($logFile)) {

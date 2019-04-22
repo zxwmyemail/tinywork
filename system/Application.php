@@ -86,7 +86,7 @@ final class Application {
         }
         date_default_timezone_set('Asia/Shanghai');
         ini_set('log_errors', 1); 
-        ini_set('error_log', LOG_PATH.'/sys_log/'.date('Ymd').'.txt');
+        ini_set('error_log', LOG_PATH.'/sys_log/'.date('Ymd').'.log');
     }
 
     /*---------------------------------------------------------------------------------------
