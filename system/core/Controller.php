@@ -35,7 +35,7 @@ class Controller {
             ob_start();
         }
         
-        header('Content-Type:text/plain; charset=utf-8');
+        header('Content-Type:application/json; charset=utf-8');
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         // echo json_encode($data);
 
