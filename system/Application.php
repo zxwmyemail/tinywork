@@ -50,6 +50,7 @@ final class Application {
     ----------------------------------------------------------------------------------------*/
     public static function classLoader($classname) {     
         $filePath = str_replace(GLOBAL_NAMESPACE, BASE_PATH, $classname) . ".php";
+        $filePath = str_replace('\\', DIRECTORY_SEPARATOR, $filePath);
         if (file_exists($filePath)) {
             require_once($filePath); 
         } else {
