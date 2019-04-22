@@ -37,10 +37,14 @@ class BaseRedis
             trigger_error('redis配置参数不存在！');die(0);
         }
 
-        $this->_redis = new \Redis();
-        $this->_isConnectOk = $this->_redis->connect($config['host'], $config['port']);
-        if ($this->_isConnectOk && $config['auth']) {
-            $this->_isConnectOk = $this->_redis->auth($config['auth']);
+        try {  
+            $this->_redis = new \Redis();
+            $this->_isConnectOk = $this->_redis->connect($config['host'], $config['port']);
+            if ($this->_isConnectOk && $config['auth']) {
+                $this->_isConnectOk = $this->_redis->auth($config['auth']);
+            }
+        } catch (\Exception $e) {
+            $this->_isConnectOk = false;
         }
 
         if (!$this->_isConnectOk) {
