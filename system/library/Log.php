@@ -21,16 +21,11 @@ class Log {
     const CRITICAL = 'CRITICAL';    //严重级别
     
     private function __construct() {
-        $dir = LOG_PATH.'/app_log/'.date('Y');
-        if (!is_dir($dir)) 
-            mkdir($dir, 0777); 
+        $logDir = LOG_PATH.'/app_log/' . date('Y') . '/';
+        if (!is_dir($logDir)) 
+            mkdir($logDir, 0777, true); 
 
-        $dir .= '/'.date('m');
-        if (!is_dir($dir)) 
-            mkdir($dir, 0777); 
-
-        $logFile = $dir.'/'.date('Ymd').'.txt';
-
+        $logFile = $logDir . date('Y-m-d') . '.txt';
         $this->LogFile = @fopen($logFile,'a+');
 
         if (!is_writable($logFile)) {
