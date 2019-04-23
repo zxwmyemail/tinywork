@@ -30,11 +30,14 @@ class BaseRedis
     public $_isConnectOk = true;             //是否连接成功，成功为true，失败为false
     private static $_instance  = array();    //本类实例
     private static $_cacheTime = 300;        //超时缓冲时间
+    private $config;
     
     private function __construct($config = array()) {
         if (empty($config) || !is_array($config)) {
             trigger_error('redis配置参数不存在！');die(0);
         }
+
+        $this->config = $config;
 
         try {  
             $this->_redis = new \Redis();
@@ -75,6 +78,16 @@ class BaseRedis
 
         return self::$_instance[$whichCache];
     }
+
+    /*------------------------------------------------------------------------------------------
+    | 析构函数，删除redis长连接实例
+    -------------------------------------------------------------------------------------------*/
+    public function __destruct() {  
+        $config = $this->config;
+        if(isset($config['pconnect']) && $config['pconnect']){
+            $this->_redis->close(); 
+        } 
+    } 
 
     /*-------------------------------------------------------------------------------------
     | 获得redis实例
@@ -275,13 +288,24 @@ class BaseRedis
 
     /*-------------------------------------------------------------------------------------
     | key设置到期时间 单位：s
-    | 注：该方法设置的是到期的时间，另有expire设置的是生存时间
+    | 注：该方法设置的是到期的时间，另有expire设置的是生存时间（秒）
     | @param string $key KEY名称
     | @param int $timestamp KEY的过期时间，unix 时间戳
     | @return 如果生存时间设置成功，返回 1 。当 key 不存在或没办法设置生存时间，返回 0 。
     -------------------------------------------------------------------------------------*/
-    public function expireat($key, $timestamp) {
-        return $this->_redis->expireat($key, $timestamp);
+    public function expireAt($key, $timestamp) {
+        return $this->_redis->expireAt($key, $timestamp);
+    }
+
+    /*-------------------------------------------------------------------------------------
+    | key设置到期时间 单位：ms
+    | 注：该方法设置的是到期的时间，另有pexpire设置的是生存时间（毫秒）
+    | @param string $key KEY名称
+    | @param int $millitimestamp KEY的过期时间，毫秒时间
+    | @return 如果生存时间设置成功，返回 1 。当 key 不存在或没办法设置生存时间，返回 0 。
+    -------------------------------------------------------------------------------------*/
+    public function pexpireAt($key, $millitimestamp) {
+        return $this->_redis->pexpireAt($key, $millitimestamp);
     }
 
     /*-------------------------------------------------------------------------------------
@@ -552,6 +576,13 @@ class BaseRedis
     -----------------------------------------------------------------------------------*/
     public function zRevRank($key, $member) {
         return $this->_redis->zRevRank($key, $member);
+    }
+
+    /*-------------------------------------------------------------------------------------
+    | 手动持久化数据到硬盘（单独起一个线程）
+    -------------------------------------------------------------------------------------*/
+    public function bgSave() {
+        return $this->_redis->bgSave();
     }
 
     /*-------------------------------------------------------------------------------------
