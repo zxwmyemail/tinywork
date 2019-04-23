@@ -23,7 +23,6 @@ class DBFactory {
         switch ($dbName) {      	
             case 'mysql' :
             	$mysql = new MySQL();
-
             	$mysql->init(
             		$this->_DBConfig['db_host'],
             		$this->_DBConfig['db_user'],
@@ -32,11 +31,12 @@ class DBFactory {
             		$this->_DBConfig['db_charset'],
             		$this->_DBConfig['db_conn']
             	);
-
             	return $mysql;
                 break;
             case 'mysqlPDO' :
-                $DB_DNS = 'mysql:host='.$this->_DBConfig['db_host'].';port='.$this->_DBConfig['db_port'].';dbname='.$this->_DBConfig['db_database'];
+                $DB_DNS  = 'mysql:host='.$this->_DBConfig['db_host'];
+                $DB_DNS .= ';port=' . $this->_DBConfig['db_port'];
+                $DB_DNS .= ';dbname=' . $this->_DBConfig['db_database'];
                 $pdoConfig = array( 
                     'username'  => $this->_DBConfig['db_user'], 
                     'password'  => $this->_DBConfig['db_password'],
@@ -44,7 +44,6 @@ class DBFactory {
                     'pconnect'  => $this->_DBConfig['db_conn'],   //是否永久链接，0非永久，1永久
                     'dns'       => $DB_DNS
                 );
-
                 return BasePDO::getInstance($pdoConfig, $this->_whichDB);
                 break;
             default :
