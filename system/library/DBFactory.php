@@ -12,7 +12,7 @@ class DBFactory {
     private $_DBConfig = null;
     private $_whichDB  = null;
 
-    function __construct($DBConfig, $whichDB='master') 
+    public function __construct($DBConfig, $whichDB='master') 
     {
         $this->_DBConfig = $DBConfig[$whichDB];
         $this->_whichDB  = $whichDB;

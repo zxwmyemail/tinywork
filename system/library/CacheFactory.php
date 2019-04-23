@@ -14,7 +14,7 @@ class CacheFactory {
     
     private $_hashRedis = null;
 
-    function __construct($Config=null, $whichCache=null) 
+    public function __construct($Config=null, $whichCache=null) 
     {
         $this->_cacheConfig = $Config;
         $this->_whichCache  = $whichCache;
