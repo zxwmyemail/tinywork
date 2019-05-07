@@ -31,9 +31,8 @@ class BasePDO {
     |---------------------------------------------------------------------------------------- 
     | @param $dbconfig 	数据库连接配置相关信息
     --------------------------------------------------------------------------------------- */ 
-    private function __construct($pdoConfig='') 
-    {  
-	if (!class_exists('PDO')) {
+    private function __construct($pdoConfig = '') {  
+	    if (!class_exists('PDO')) {
             $this->_isConnectOk = false;
             error_log('[' . date('Y-m-d H:i:s') . '] 环境不支持PDO连接，请维护人员检查!');
         } else {
@@ -41,23 +40,17 @@ class BasePDO {
                 $this->_isConnectOk = false;
                 error_log('[' . date('Y-m-d H:i:s') . '] PDO连接参数为空，请维护人员检查!');
             } else {
-                try {  
-                    // var_dump('string');die();
+                try {
                     $this->_pdo = new \PDO($pdoConfig['dns'], $pdoConfig['username'], $pdoConfig['password']);  
-
                     $this->_pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION); 
-
                     if($pdoConfig['pconnect']) { 
                         $this->_pdo->setAttribute(\PDO::ATTR_PERSISTENT, TRUE); 
                     }
-
                     $this->_pdo->query('SET NAMES ' . $pdoConfig['dbcharset']);
-
                 } catch (\PDOException $e) {  
                     error_log('[' . date('Y-m-d H:i:s') . '] mysqlPDO连接数据库失败，请维护人员检查!');
                     $this->_isConnectOk = false;
                 }
-
                 unset($pdoConfig); 
             }
         }   
