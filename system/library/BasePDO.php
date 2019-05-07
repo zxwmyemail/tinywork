@@ -34,7 +34,7 @@ class BasePDO {
             $this->_isConnectOk = false;
             error_log('[' . date('Y-m-d H:i:s') . '] 环境不支持PDO连接，请维护人员检查!');
         } else {
-            if (empty($pdoConfig)) {
+            if (empty($pdoConfig) || !is_array($pdoConfig)) {
                 $this->_isConnectOk = false;
                 error_log('[' . date('Y-m-d H:i:s') . '] PDO连接参数为空，请维护人员检查!');
             } else {
