@@ -6,7 +6,7 @@ use app\system\Application;
 class ZFExcel {
     public function __construct() {
         Application::registerAutoload(false);
-        require_once(SYS_FRAMEWORK_PATH . '/phpexcel/PHPExcel.php');
+        require_once(SYS_FRAMEWORK_PATH . DS . 'phpexcel' . DS . 'PHPExcel.php');
     }
 
     /*-------------------------------------------------------------------------------------------------------------------

@@ -6,7 +6,7 @@ use app\system\Application;
 class ZFSmarty {
     public function __construct() {
         Application::registerAutoload(false);
-        require_once(SYS_FRAMEWORK_PATH . '/smarty/libs/Smarty.php');
+        require_once(SYS_FRAMEWORK_PATH . DS . 'smarty' . DS . 'libs' . DS . 'Smarty.php');
     }
 
     /*---------------------------------------------------------------------------------------
@@ -24,10 +24,10 @@ class ZFSmarty {
         $smarty = new \Smarty; 
         
         //设置各个目录的路径，这里是配置smarty的路径参数
-        $smarty->template_dir    = VIEW_PATH . '/' . $module . '/' . $controller;
-        $smarty->compile_dir     = SYS_FRAMEWORK_PATH . "/smarty/templates_c";
-        $smarty->config_dir      = SYS_FRAMEWORK_PATH . "/smarty/config";
-        $smarty->cache_dir       = SYS_FRAMEWORK_PATH . "/smarty/cache";
+        $smarty->template_dir    = VIEW_PATH . DS . $module . DS . $controller;
+        $smarty->compile_dir     = SYS_FRAMEWORK_PATH . DS . "smarty" . DS . "templates_c";
+        $smarty->config_dir      = SYS_FRAMEWORK_PATH . DS . "smarty" . DS . "config";
+        $smarty->cache_dir       = SYS_FRAMEWORK_PATH . DS . "smarty" . DS . "cache";
         $smarty->left_delimiter  = "<{";
         $smarty->right_delimiter = "}>";
 
