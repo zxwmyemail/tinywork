@@ -17,12 +17,10 @@ class BasePDO {
     /*--------------------------------------------------------------------------------------- 
     | 公共静态方法获取实例化的对象
     ---------------------------------------------------------------------------------------*/  
-    public static function getInstance($pdoConfig = '', $whichDB='master') 
-    {  
+    public static function getInstance($pdoConfig = '', $whichDB = 'master') {  
         if(!isset(self::$_pdoInstance[$whichDB])){  
             self::$_pdoInstance[$whichDB] = new self($pdoConfig);   
         }
-
         return self::$_pdoInstance[$whichDB];  
     }  
 
@@ -84,6 +82,37 @@ class BasePDO {
         $sql = "INSERT INTO {$table} {$addFields} VALUES {$addValues}";  
         return $this->execSQL($sql);  
     }
+
+    /*-------------------------------------------------------------------------------------- 
+    | 添加多条记录
+    |---------------------------------------------------------------------------------------
+    | @param  string  $table  表名
+    | @param  array   $data   array(
+    |                               array('表字段名'=>'表字段值','表字段名'=>'表字段值',......),
+    |                               array('表字段名'=>'表字段值','表字段名'=>'表字段值',......)
+    |                         );
+    |
+    | @return int     影响记录数
+    --------------------------------------------------------------------------------------*/  
+    public function addMany($table, $data) 
+    { 
+        if (empty($table) || empty($data) || !is_array($data)) {
+            throw new \Exception("添加多条记录函数传递的参数异常", 1);
+        }
+
+        $addFields = array_keys($data[0]); 
+
+        $addValues = array();
+        foreach ($data as $value) {
+            $addValues[] = "('".implode("','",array_values($value))."')";
+        }  
+
+        $addFields = "(`" . implode('`,`', $addFields) . "`)"; 
+        $addValues = implode(",", $addValues);
+
+        $sql = "INSERT INTO {$table} {$addFields} VALUES {$addValues}";  
+        return $this->execSQL($sql);  
+    }
      
     /*-------------------------------------------------------------------------------------- 
     | 删除记录
@@ -97,7 +126,7 @@ class BasePDO {
     |
     | @return   int     影响记录数
     --------------------------------------------------------------------------------------*/  
-    public function deleteRecord($table, $wheredata) 
+    public function delete($table, $wheredata) 
     { 
         if (empty($table) || !is_array($wheredata)) {
             throw new \Exception("删除记录函数传递的参数异常", 1);
@@ -118,7 +147,7 @@ class BasePDO {
     |
     | @return   int     影响记录数
     --------------------------------------------------------------------------------------*/  
-    public function updateRecord($table, $updatedata, $wheredata) 
+    public function update($table, $updatedata, $wheredata) 
     { 
         if (empty($table) || empty($updatedata) || !is_array($updatedata)) {
             throw new \Exception("添加一条记录函数传递的参数异常", 1);
@@ -149,9 +178,7 @@ class BasePDO {
     | @return   string  where条件字符串
     --------------------------------------------------------------------------------------*/ 
     public function handleWhere($data){
-        if (empty($data)) {
-            return false;
-        }
+        if (empty($data) || !is_array($data)) return ['where' => '', 'searchData' => []];
 
         $where = '';
         $searchData = array();
@@ -180,37 +207,6 @@ class BasePDO {
             'where'      => $where,
             'searchData' => $searchData,
         );
-    }
-
-    /*-------------------------------------------------------------------------------------- 
-    | 添加多条记录
-    |---------------------------------------------------------------------------------------
-    | @param  string  $table  表名
-    | @param  array   $data   array(
-    |                       	    array('表字段名'=>'表字段值','表字段名'=>'表字段值',......),
-    |				    array('表字段名'=>'表字段值','表字段名'=>'表字段值',......)
-    |                         );
-    |
-    | @return int     影响记录数
-    --------------------------------------------------------------------------------------*/  
-    public function addMany($table, $data) 
-    { 
-    	if (empty($table) || empty($data) || !is_array($data)) {
-    		throw new \Exception("添加多条记录函数传递的参数异常", 1);
-    	}
-
-    	$addFields = array_keys($data[0]); 
-
-        $addValues = array();
-        foreach ($data as $value) {
-          	$addValues[] = "('".implode("','",array_values($value))."')";
-        }  
-
-        $addFields = "(`" . implode('`,`', $addFields) . "`)"; 
-        $addValues = implode(",", $addValues);
-
-        $sql = "INSERT INTO {$table} {$addFields} VALUES {$addValues}";  
-        return $this->execSQL($sql);  
     }
 
     /*-------------------------------------------------------------------------------------- 
@@ -269,10 +265,10 @@ class BasePDO {
     --------------------------------------------------------------------------------------*/ 
     public function fetchAll($sql='', $params = array()) 
     { 
-	$this->select($sql, $params);
+	   $this->select($sql, $params);
 
         //返回数据集 
-	return $this->_pdoStmt->fetchAll(\PDO::FETCH_ASSOC); 
+	   return $this->_pdoStmt->fetchAll(\PDO::FETCH_ASSOC); 
     }  
 
     /*---------------------------------------------------------------------------------------
@@ -338,9 +334,9 @@ class BasePDO {
     --------------------------------------------------------------------------------------*/ 
     private function select($sql='', $params=array()) 
     { 
-	try {  
-           //释放前次的查询结果 
-	    if ( !empty($this->_pdoStmt)) $this->_pdoStmt = null;
+	    try {  
+            //释放前次的查询结果 
+	        if ( !empty($this->_pdoStmt)) $this->_pdoStmt = null;
 
             $this->_pdoStmt = $this->_pdo->prepare($sql); 
             $this->_pdoStmt->execute($params); 
