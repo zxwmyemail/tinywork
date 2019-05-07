@@ -5,10 +5,10 @@
  * @author      iProg
  * @version     1.0
  *****************************************************************/
- 
-define('BASE_PATH', dirname(dirname(__FILE__)));
 
 define('DS', DIRECTORY_SEPARATOR);
+
+define('BASE_PATH', dirname(dirname(__FILE__)));
 
 //加载系统常量
 require BASE_PATH . DS . 'config' . DS . 'const.config.php';
