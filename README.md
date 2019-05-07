@@ -1,4 +1,4 @@
-ZxwFramework - 基于MVC的php框架
+tinywork - 基于MVC的php框架
 
 > - 作者： iProg
 > - 日期： 2015-01-12
