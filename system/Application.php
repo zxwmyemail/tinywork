@@ -170,7 +170,7 @@ final class Application {
     | @param $string
     | @param $low 安全别级低
     ----------------------------------------------------------------------------------------*/
-    public static function cleanXss(&$string, $low = False) {
+    public static function cleanXss(&$string, $low = false) {
         if (is_array ($string)) {
             foreach ($string as $value) {
                 self::cleanXss($value);
