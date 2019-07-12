@@ -59,107 +59,60 @@ class BaseLog {
     }
 
     /*------------------------------------------------------------------------------------------
-    | 写日志调试信息
-    -------------------------------------------------------------------------------------------*/
-    public static function debug($msg, $module = '')
-    {
+    | 对字符传进行简单处理
+    ------------------------------------------------------------------------------------------*/
+    private static function writeLog($msg, $module, $level) {
         if (empty($msg)) return;
-
         self::getInstance();
 
         $time = date('Y-m-d H:i:s');
-        $msg = str_replace(array("\n","\t"),array("",""),$msg);
-        $module = str_replace(array("\n","\t"),array("",""),$module);
+        $msg = str_replace(["\n", "\t"], ["", ""], $msg);
+        $module = empty($module) ? self::$_defaultModule : str_replace(["\n", "\t"], ["", ""], $module);
 
-        $logLine = "[$time][" . self::DEBUG . "][$module]:$msg\r\n";
-        fwrite(self::$_logHandle, $logLine);
+        $logLine = "[$time][$level][$module]:$msg\r\n";
+        return fwrite(self::$_logHandle, $logLine);
+    }
+
+    /*------------------------------------------------------------------------------------------
+    | 写日志调试信息
+    -------------------------------------------------------------------------------------------*/
+    public static function debug($msg, $module = 'app') {
+        return self::writeLog($msg, $module, self::DEBUG);
     }
 
     /*------------------------------------------------------------------------------------------
     | 写日志普通信息
     -------------------------------------------------------------------------------------------*/
-    public static function info($msg, $module = '')
-    {
-        if (empty($msg)) return;
-
-        self::getInstance();
-
-        $time = date('Y-m-d H:i:s');
-        $msg = str_replace(["\n","\t"], ["",""], $msg);
-        $module = empty($module) ? self::$_defaultModule : str_replace(["\n", "\t"], ["", ""], $module);
-
-        $logLine = "[$time][" . self::INFO . "][$module]:$msg\r\n";
-        fwrite(self::$_logHandle, $logLine);
+    public static function info($msg, $module = 'app') {
+        return self::writeLog($msg, $module, self::INFO);
     }
 
     /*------------------------------------------------------------------------------------------
     | 写日志通知信息
     -------------------------------------------------------------------------------------------*/
-    public static function notice($msg, $module = '')
-    {
-        if (empty($msg)) return;
-
-        self::getInstance();
-
-        $time = date('Y-m-d H:i:s');
-        $msg = str_replace(array("\n","\t"),array("",""),$msg);
-        $module = empty($module) ? self::$_defaultModule : str_replace(["\n", "\t"], ["", ""], $module);
-
-        $logLine = "[$time][" . self::NOTICE . "][$module]:$msg\r\n";
-        fwrite(self::$_logHandle, $logLine);
+    public static function notice($msg, $module = 'app') {
+        return self::writeLog($msg, $module, self::NOTICE);
     }
 
     /*------------------------------------------------------------------------------------------
     | 写日志警告信息
     -------------------------------------------------------------------------------------------*/
-    public static function warning($msg, $module = '')
-    {
-        if (empty($msg)) return;
-
-        self::getInstance();
-
-        $time = date('Y-m-d H:i:s');
-        $msg = str_replace(array("\n","\t"),array("",""),$msg);
-        $module = empty($module) ? self::$_defaultModule : str_replace(["\n", "\t"], ["", ""], $module);
-
-        $logLine = "[$time][" . self::WARNING . "][$module]:$msg\r\n";
-        fwrite(self::$_logHandle, $logLine);
+    public static function warning($msg, $module = 'app') {
+        return self::writeLog($msg, $module, self::WARNING);
     }
 
     /*------------------------------------------------------------------------------------------
     | 写日志错误信息
     -------------------------------------------------------------------------------------------*/
-    public static function error($msg, $module = '')
-    {
-        if (empty($msg)) return;
-
-        self::getInstance();
-
-        $time = date('Y-m-d H:i:s');
-        $msg = str_replace(array("\n","\t"),array("",""),$msg);
-        $module = empty($module) ? self::$_defaultModule : str_replace(["\n", "\t"], ["", ""], $module);
-
-        $logLine = "[$time][" . self::ERROR . "][$module]:$msg\r\n";
-        fwrite(self::$_logHandle, $logLine);
+    public static function error($msg, $module = 'app') {
+        return self::writeLog($msg, $module, self::ERROR);
     }
 
     /*------------------------------------------------------------------------------------------
     | 写日志严重错误信息
     -------------------------------------------------------------------------------------------*/
-    public static function critical($msg, $module = '')
-    {
-        if (empty($msg)) return;
-
-        self::getInstance();
-
-        $time = date('Y-m-d H:i:s');
-        $msg = str_replace(array("\n","\t"),array("",""),$msg);
-        $module = empty($module) ? self::$_defaultModule : str_replace(["\n", "\t"], ["", ""], $module);
-
-        $logLine = "[$time][" . self::CRITICAL . "][$module]:$msg\r\n";
-        fwrite(self::$_logHandle, $logLine);
+    public static function critical($msg, $module = 'app') {
+        return self::writeLog($msg, $module, self::CRITICAL);
     }
 
 }
-
-?>
