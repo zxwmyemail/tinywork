@@ -1,5 +1,5 @@
 <?php
-namespace app\mvc\model;
+namespace app\mvc\home\models;
 
 use app\system\core\Model;
 use app\extend\ZFExcel;
@@ -11,11 +11,11 @@ class Test extends Model{
     }
     
     public function testPDO(){
-        var_dump($this->getDB('mysqlPDO'));
+        var_dump($this->getDB('mysql'));
     }
 
     public function testRedis(){
-        var_dump($this->getCache('redis'));
+        var_dump($this->getCache('redis'));die();
     }
 
     public function testExcel(){

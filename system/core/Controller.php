@@ -11,16 +11,11 @@ use app\system\library\CacheFactory;
 use app\extend\ZFSmarty;
 
 class Controller {
+    use Common;
 
-    private $_redisConfig  = null;
-    private $_memcacheConfig  = null;
     private $_smarty = null;
-    private $_jsonRPCClient = null;
         
-    public function __construct() {
-        $this->setRedisConfig();
-        $this->setMemcacheConfig();
-    }
+    public function __construct() {}
     
     /*---------------------------------------------------------------------------------------
     | 返回接口json数据，进行gzip压缩
@@ -48,13 +43,13 @@ class Controller {
     | 直接使用php嵌入html的方式渲染模板
     ----------------------------------------------------------------------------------------*/
     public function display($htmlFile, $data = []) {
-        $routeInfo = Application::getMCA();
+        $routeInfo = Application::$_routeParams;
 
-        $_module     = $routeInfo['module'].'Module';
+        $_module     = $routeInfo['module'];
         $_controller = $routeInfo['controller'];
         
         //设置各个目录的路径，这里是配置smarty的路径参数
-        $templatePath = VIEW_PATH . '/' . $_module . '/' . $_controller . '/' . $htmlFile . '.php';
+        $templatePath = MVC_PATH . '/' . $_module . '/views/' . $_controller . '/' . $htmlFile . '.php';
 
         extract($data); 
         include($templatePath);
@@ -75,39 +70,6 @@ class Controller {
                 break;    
             default:
                 echo '获取' . $name . '实例时，参数错误';exit();
-                break;
-        }
-    }
-    
-    /*---------------------------------------------------------------------------------------
-    | 获取缓存实例
-    |----------------------------------------------------------------------------------------
-    | @access  final   public
-    | @param   string  $name    缓存名字：session、redis、hashRedis、memcache
-    | @param   string  $whichCache    哪一个缓存：
-    |                                 2、如果获取redis的master实例：
-    |                                    $whichCache = 'master';
-    ----------------------------------------------------------------------------------------*/
-    public function getCache($name = 'session', $whichCache = 'master'){
-        switch ($name) {
-            case 'session':
-                $cache = new CacheFactory();
-                return  $cache->session;
-                break;
-            case 'redis':
-                $cache = new CacheFactory($this->_redisConfig, $whichCache);
-                return  $cache->redis;
-                break;
-            case 'hashRedis':
-                $cache = new CacheFactory($this->_redisConfig);
-                return  $cache->hashRedis;
-                break;
-            case 'memcache':
-                $cache = new CacheFactory($this->_memcacheConfig);
-                return  $cache->memcache;
-                break;
-            default:
-                echo '参数错误';exit();
                 break;
         }
     }
@@ -163,7 +125,7 @@ class Controller {
     | 重定向
     |--------------------------------------------------------------------------------------
     | @param  $action     string   重定向路由，格式有两种：
-    |                              1. 'controller/action',重定向到其他控制层
+    |                              1. 'controller.action',重定向到其他控制层
     |                              2. 'action',重定向到自身控制层的其他action
     | @param  $param      array    重定向参数
     | @param  $end        bool     重定向后是否终止应用
@@ -171,19 +133,19 @@ class Controller {
     --------------------------------------------------------------------------------------*/
     public function redirect($action, $param = [], $end = true, $statusCode = 302) {
         if (empty($action)) return false;
-	
-        $action = explode('/', $action);
-        $reqParams = Application::$_reqParams;
-        $defaultRoute = $this->config('route');
-        $url = empty($reqParams['module']) ? 'index.php?' : 'index.php?m='.$reqParams['module'].'&';
 
-        if ($defaultRoute['url_type'] == 1) {
-            
+        $routeConf = Config::get('config', 'route');
+    
+        $action = explode('.', $action);
+        $route = Application::$_routeParams;
+
+        if ($routeConf['use_pathinfo'] == 1) {
+            $url = 'index.php?m=' . $route['module'] . '&';
+
             if (count($action) == 2) {
                 $url .= 'r='.$action[0] . '.' . $action[1];
             } elseif (count($action) == 1) {
-                $url .= empty($reqParams['controller']) ? 'r='.$defaultRoute['default_controller'].'.' : 'r='.$reqParams['controller'].'.';
-                $url .= $action[0];
+                $url .= 'r=' . $route['controller'] . '.' . $action[0];
             } else {
                 trigger_error('重定向失败，路由参数【 '.$action.' 】解析失败！');die();
             }
@@ -191,51 +153,28 @@ class Controller {
             if (!empty($param)) {
                 $url .= "&" . http_build_query($param);
             }
-        } elseif ($defaultRoute['url_type'] == 2) {
-            $url = empty($reqParams['module']) ? 'index.php/' : 'index.php/'.$reqParams['module'].'/';
+
+            header("Location:".$url, true, $statusCode);
+        } elseif ($routeConf['use_pathinfo'] == 2) {
+            $url = 'index.php/' . $route['module'] . '/';
+
             if (count($action) == 2) {
-                $url .= $action[0].'/'.$action[1];
+                $url .= $action[0] . '/' . $action[1];
             } elseif (count($action) == 1) {
-                $url .= empty($reqParams['controller']) ? $defaultRoute['default_controller'].'/' : $reqParams['controller'].'/';
-                $url .= $action[0];
+                $url .= $route['controller'] . '/' . $action[0];
             } else {
                 trigger_error('重定向失败，路由参数【 '.$action.' 】解析失败！');die();
             }
 
             if (!empty($param)) {
-                $url .= '/?'.http_build_query($param);
+                $url .= "?" . http_build_query($param);
             }
+
+            header("Location:".$url, true, $statusCode);
         }
 
-        header("Location:".$url, true, $statusCode);
-
-        if ($end) exit();
+        if ($end) exit(0);
     }
-
-    /*--------------------------------------------------------------------------------------
-    | 加载系统配置,默认为系统配置 $CONFIG['system'][$config]
-    |---------------------------------------------------------------------------------------
-    | @access      final   protected
-    | @param       string  $config 配置名  
-    --------------------------------------------------------------------------------------*/
-    protected function config($config) {
-        return Application::$_config[$config];
-    }
-
-    /*--------------------------------------------------------------------------------------
-    | 加载redis参数配置
-    --------------------------------------------------------------------------------------*/
-    protected function setRedisConfig() {
-        $this->_redisConfig = Application::$_config['redis'];
-    }
-
-    /*--------------------------------------------------------------------------------------
-    | 加载memcache参数配置
-    --------------------------------------------------------------------------------------*/
-    protected function setMemcacheConfig() {
-        $this->_memcacheConfig = Application::$_config['memcache'];
-    }
-
 
 }
 

@@ -16,15 +16,15 @@ class ZFSmarty {
     ----------------------------------------------------------------------------------------*/
     public function getSmarty()
     {
-        $routeInfo = Application::getMCA();
+        $routeInfo = Application::$_routeParams;
 
-        $module     = $routeInfo['module'].'Module';
+        $module     = $routeInfo['module'];
         $controller = $routeInfo['controller'];
 
         $smarty = new \Smarty; 
         
         //设置各个目录的路径，这里是配置smarty的路径参数
-        $smarty->template_dir    = VIEW_PATH . DS . $module . DS . $controller;
+        $smarty->template_dir    = MVC_PATH . DS . $module . DS . 'views' . DS . $controller;
         $smarty->compile_dir     = SYS_FRAMEWORK_PATH . DS . "smarty" . DS . "templates_c";
         $smarty->config_dir      = SYS_FRAMEWORK_PATH . DS . "smarty" . DS . "config";
         $smarty->cache_dir       = SYS_FRAMEWORK_PATH . DS . "smarty" . DS . "cache";

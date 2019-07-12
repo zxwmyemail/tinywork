@@ -1,2 +1,0 @@
-[16-Apr-2019 15:59:37 Asia/Shanghai] PHP Notice:  Undefined variable: sysInfo in D:\phpStudy\PHPTutorial\WWW\zfw\mvc\model\Probe.php on line 13
-[16-Apr-2019 15:59:37 Asia/Shanghai] PHP Warning:  Use of undefined constant gd_info - assumed 'gd_info' (this will throw an Error in a future version of PHP) in D:\phpStudy\PHPTutorial\WWW\zfw\mvc\model\Probe.php on line 70

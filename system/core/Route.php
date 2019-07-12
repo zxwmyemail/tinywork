@@ -9,103 +9,107 @@ namespace app\system\core;
 
 final class Route {
 
-    private $_queryString;
-    private $_urlType;
-    private $_reqParams = array();
-
-    public function __construct($urlType = 1) {
-        $this->_urlType = $urlType;
-
-        if ($this->_urlType == 1 || $this->_urlType == 2) {
-            $this->_queryString = $_SERVER['QUERY_STRING'];
-        } else {
-            trigger_error("指定的URL模式不存在！");
-        }
-      
-    }
-
+    private static $_reqParams = [];
+    private static $_routeParams = [];
 
     /*-------------------------------------------------------------------------------------
     | 获取数组形式的URL  
     |--------------------------------------------------------------------------------------
     | @access      public
     -------------------------------------------------------------------------------------*/
-    public function getUrlArray()
-    {
-        switch ($this->_urlType){
+    public static function handleParams() {
+        $routeConf = Config::get('config', 'route');
+
+        $result = [];
+        switch ($routeConf['use_pathinfo']){
             case 1:
-                $this->queryToArray();
+                $result = self::parseCommonRoute($routeConf);
                 break;
             case 2:
-                $this->pathinfoToArray();
+                $result = self::parsePathinfoRoute($routeConf);
                 break;
+            default:
+                throw new \Exception('config配置文件中route端，use_pathinfo值配置错误');
         }
 
-        return $this->_reqParams;
+        return $result;
     }
 
-
     /*-------------------------------------------------------------------------------------
-    | 将query形式的URL转化成数组
+    | 普通路由获取参数
     |--------------------------------------------------------------------------------------
     | @access      public
     -------------------------------------------------------------------------------------*/
-    public function queryToArray()
-    {
-        $arr = !empty ($this->_queryString) ? explode('&', $this->_queryString ) : array();
-        $array = $tmp = array();
-        if (count($arr) > 0) {
-            foreach ($arr as $item) {
-                $tmp = explode('=', $item);
-                $array[$tmp[0]] = $tmp[1];
-            }
-            
-            if (isset($array['m'])) {
-                $this->_reqParams['module'] = $array['m'];
-                unset($array['m']);
-            }
-            if (isset($array['r'])) {
-                $route = explode('.', $array['r']);
-                $this->_reqParams['controller'] = $route[0];
-                $this->_reqParams['action'] = $route[1];
-                unset($array['r']);
-            } 
-            
-            if(count($array) > 0){
-                $this->_reqParams['params'] = $array;
-            }
-        }  
-    }
+    public static function parseCommonRoute($routeConf) {
 
-
-    /*--------------------------------------------------------------------------------------
-    | 将PATH_INFO的URL形式转化为数组
-    |---------------------------------------------------------------------------------------
-    | @access      public
-    --------------------------------------------------------------------------------------*/
-    public function pathinfoToArray()
-    {
-        if (isset($_SERVER['PATH_INFO'])){
-            //获取 pathinfo
-            $pathinfo = trim($_SERVER['PATH_INFO'], '/');
-            $pathInfo = explode('/', $pathinfo);
-
-            // 获取 module
-            if (count($pathInfo) > 2) {
-                $this->_reqParams['module'] = (isset($pathInfo[0]) ? $pathInfo[0] : null);
-                array_shift($pathInfo);
-            }
-            
-            // 获取 controller
-            $this->_reqParams['controller'] = (isset($pathInfo[0]) ? $pathInfo[0] : null);
-            array_shift($pathInfo);
-
-            // 获取 action
-            $this->_reqParams['action'] = (isset($pathInfo[0]) ? $pathInfo[0] : null);
-            array_shift($pathInfo);
+        if (isset($_REQUEST['m'])) {
+            self::$_routeParams['module'] = $_REQUEST['m'];
+            unset($_REQUEST['m']);
+        } else {
+            self::$_routeParams['module'] = $routeConf['default_module'];
         }
 
-        $this->queryToArray();   
+        if (isset($_REQUEST['r'])) {
+            $route = explode('.', $_REQUEST['r']);
+            self::$_routeParams['controller'] = $route[0];
+            self::$_routeParams['action'] = $route[1];
+            unset($_REQUEST['r']);
+        } else {
+            self::$_routeParams['controller'] = $routeConf['default_controller'];
+            self::$_routeParams['action'] = $routeConf['default_action'];
+        } 
+        
+        self::$_reqParams = $_REQUEST;
+
+        return [
+            'request' => self::$_reqParams,
+            'route'   => self::$_routeParams
+        ];
+    }
+
+    /*-------------------------------------------------------------------------------------
+    | pathinfo获取路由参数
+    |--------------------------------------------------------------------------------------
+    | @access      public
+    -------------------------------------------------------------------------------------*/
+    public static function parsePathinfoRoute($routeConf) {
+
+        if (isset($_SERVER['PATH_INFO'])){
+            //获取 pathInfo
+            $pathInfo = trim($_SERVER['PATH_INFO'], '/');
+            $pathInfo = empty($pathInfo) ? [] : explode('/', $pathInfo);
+
+            // 获取 module
+            if (count($pathInfo) > 2 && isset($pathInfo[0])) {
+                self::$_routeParams['module'] = $pathInfo[0];
+                array_shift($pathInfo);
+            } else {
+                self::$_routeParams['module'] = $routeConf['default_module'];
+            }
+
+            // 获取 controller
+            if (count($pathInfo) > 0 && isset($pathInfo[0])) {
+                self::$_routeParams['controller'] = $pathInfo[0];
+                array_shift($pathInfo);
+            } else {
+                self::$_routeParams['controller'] = $routeConf['default_controller'];
+            }
+            
+            // 获取 action
+            if (count($pathInfo) > 0 && isset($pathInfo[0])) {
+                self::$_routeParams['action'] = $pathInfo[0];
+                array_shift($pathInfo);
+            } else {
+                self::$_routeParams['action'] = $routeConf['default_action'];
+            }
+        }
+
+        self::$_reqParams = $_REQUEST; 
+
+        return [
+            'request' => self::$_reqParams,
+            'route'   => self::$_routeParams
+        ];
     }
 
 }

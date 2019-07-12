@@ -11,8 +11,8 @@ use app\system\library\Log;
 
 final class Application {
 
-    public static  $_config = null;         //系统配置参数，对应params.config.php文件
-    public static  $_reqParams = null;      //请求url参数
+    public static  $_reqParams;      //请求参数
+    public static  $_routeParams;    //路由参数
 
     /*---------------------------------------------------------------------------------------
     | 创建应用
@@ -20,26 +20,22 @@ final class Application {
     | @access      public
     | @param       array   $config
     ----------------------------------------------------------------------------------------*/
-    public static function run($config) {
-        self::registerAutoload();
-
-        //加载config/下的参数配置params.config.php
-        self::$_config = $config['system'];
-
+    public static function run() {
         //初始化系统错误是否显示
         self::isDisplayErrors();
+
+        self::registerAutoload();
 
         //防止sql注入检查
         self::checkRequestParams();
 
-        //获取路由对象
-        $route = new Route(self::$_config['route']['url_type']);
-
-        //将url参数转换成数组 
-        self::$_reqParams = $route->getUrlArray();   
+        //获取请求参数
+        $params = Route::handleParams(); 
+        self::$_reqParams = $params['request'];
+        self::$_routeParams = $params['route']; 
 
         //导向控制层
-        self::routeToCtrl(self::$_reqParams);
+        self::routeToCtrl();
     }
 
     /*---------------------------------------------------------------------------------------
@@ -55,7 +51,7 @@ final class Application {
             require_once($filePath); 
         } else {
             error_log('[' . date('Y-m-d H:i:s') . '][ERROR] 加载 ' . $filePath . ' 类库不存在');
-            header('Location: index.php?m=home&r=home.page404');
+            header('Location: index.php?m=home&r=home.page500');
         } 
     }
 
@@ -92,43 +88,27 @@ final class Application {
 
     /*---------------------------------------------------------------------------------------
     | 根据URL分发到Controller
-    |----------------------------------------------------------------------------------------
-    | @access      public 
-    | @param       array   $url_array     
-    ---------------------------------------------------------------------------------------*/
-    public static function routeToCtrl($url_array) {   
-        $routeInfo = self::getMCA();
+    |---------------------------------------------------------------------------------------*/
+    public static function routeToCtrl() {   
+        $route = self::$_routeParams;
 
-        $module     = $routeInfo['module'].'Module';
-        $controller = $routeInfo['controller'].'Controller';
-        $action     = $routeInfo['action'].'Action';
-        
-        $controllerClass = GLOBAL_NAMESPACE . "\mvc\controller\\".$module."\\".$controller;
-        $controller = new $controllerClass;
+        $module = $route['module'];
+        $ctrl   = ucfirst($route['controller']);
+        $action = $route['action'];
 
-        if($action && method_exists($controller, $action)){
-            $params = empty($url_array['params']) ? '' : $url_array['params'];
-            isset($params) ? $controller->$action($params) : $controller->$action();
-        } else {
-            $errMsg = '无效路由:m=' . $routeInfo['module'] . '&r=' . $routeInfo['controller'] . '.' . $routeInfo['action'];
-            error_log('[' . date('Y-m-d H:i:s') . '][ERROR] ' . $errMsg);
-            header('Location: index.php?m=home&r=home.page404');
+        try {
+            if (!preg_match('/^[A-Za-z](\w|\.)*$/', $ctrl)) {
+                throw new \Exception('controller not exists:' . $ctrl, 404);
+            }
+            $controller = "app\mvc\\" . $module . "\controllers\\" . $ctrl;
+            $controllerObj = new $controller;
+            $controllerObj->$action(self::$_reqParams);
+        } catch (\Throwable $e) {
+            error_log('PHP Error:  ' . $e->getMessage() . ' in ' . $e->getFile(). ' on line ' . $e->getLine());
+            header('Location: ?r=home.page500');
         }
+        
         exit(0);
-    }
-
-    /*---------------------------------------------------------------------------------------
-    | 获取module、controller和action   
-    ---------------------------------------------------------------------------------------*/
-    public static function getMCA() {   
-        $_reqParams = self::$_reqParams;
-        $routeConf = self::$_config['route'];
-
-        return [
-            'module'     => empty($_reqParams['module']) ? $routeConf['default_module'] : $_reqParams['module'],
-            'controller' => empty($_reqParams['controller']) ? $routeConf['default_controller']: $_reqParams['controller'],
-            'action'     => empty($_reqParams['action']) ? $routeConf['default_action']: $_reqParams['action'],
-        ];
     }
     
     /*---------------------------------------------------------------------------------------

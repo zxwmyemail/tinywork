@@ -1,5 +1,5 @@
 <?php
-namespace app\mvc\model;
+namespace app\mvc\home\models;
 
 class Probe {
 

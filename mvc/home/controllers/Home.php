@@ -1,36 +1,41 @@
 <?php
-namespace app\mvc\controller\homeModule;
+namespace app\mvc\home\controllers;
 
 use app\system\Application;
 use app\system\core\Controller;
-use app\system\library\Log;
+use app\system\library\BaseLog;
 use app\system\library\Util;
-use app\mvc\model\Test;
-use app\mvc\model\Probe;
+use app\mvc\home\models\Test;
+use app\mvc\home\models\Probe;
 
-class homeController extends Controller {
+class Home extends Controller {
         
     public function __construct() {
         parent::__construct();
     }
 
-    public function page404Action() {
-        $this->smarty->display('404Page.html'); 
+    public function page500() {
+        $this->smarty->display('page500.html'); 
     }
 
-    public function testAction() {
+    public function test() {
         
         //测试重定向
-        $this->redirect('page404'); 
+        // $this->redirect('page404'); 
 
         //测试model类
         $test = new Test();
-        $test->testPDO();
-        $test->testRedis();
+        // $test->testPDO();
+        // $test->testRedis();
         $test->testExcel();
     }
+
+    public function testLog() {
+        
+        BaseLog::error('测试日志');
+    }
     
-    public function indexAction() {
+    public function index() {
         $probe = new Probe();
         $serverParam = $probe->getServerParam();
         $phpParam    = $probe->getPhpParam();
@@ -42,11 +47,11 @@ class homeController extends Controller {
         $this->smarty->display('probe.html'); 
     }
 
-    public function getPhpInfoAction() {
+    public function getPhpInfo() {
         phpinfo();
     }
 
-    public function getEnableFunAction() {
+    public function getEnableFun() {
         $arr = get_defined_functions();
         Function php(){};
         echo "<p>这里显示系统支持的所有函数和自定义函数</p>";
