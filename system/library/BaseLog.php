@@ -27,10 +27,11 @@ class BaseLog {
             mkdir($logDir, 0777, true); 
 
         $logFile = $logDir . date('Y-m-d') . '.log';
+        self::$_logHandle = @fopen($logFile,'a+');
         if (!is_writable($logFile)) {
             chmod($logFile, 0777);
         } 
-        self::$_logHandle = @fopen($logFile,'a+');
+        
         if(!is_resource(self::$_logHandle)){
             throw new \Exception('无效的文件路径');
         }
