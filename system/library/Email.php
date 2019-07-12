@@ -75,14 +75,12 @@ class Email {
 	| @param  string   $inAddress  email地址变量,使用逗号来分割多个邮件地址
 	| @return bool
 	----------------------------------------------------------------------------------------*/ 
-	public function setBCC($inAddress)
-	{ 
+	public function setBCC($inAddress) { 
 		//--用explode()函数根据”,”对邮件地址进行分割 
 		$addressArray = explode( ",",$inAddress); 
 
 		//--通过循环对邮件地址的合法性进行检查 
 		foreach ($addressArray as $value) { 
-		{ 
 			if($this->checkEmail($value)==false) 
 				return false; 
 		}  
@@ -98,9 +96,8 @@ class Email {
 	| @param  string  $inAddress  发送人的邮件地址
 	| @return bool
 	---------------------------------------------------------------------------------*/ 
-	public function setFrom($inAddress)
-	{ 
-		if($this->checkEmail($inAddress)){ 
+	public function setFrom($inAddress) { 
+		if($this->checkEmail($inAddress)) { 
 			$this->mailFrom = $inAddress; 
 			return true; 
 		} 
@@ -113,9 +110,8 @@ class Email {
 	| @param   string   $inSubject   邮件主题 
 	| @return  bool  
 	---------------------------------------------------------------------------------*/ 
-	public function setSubject($inSubject)
-	{ 
-		if(strlen(trim($inSubject)) > 0){ 
+	public function setSubject($inSubject) { 
+		if(strlen(trim($inSubject)) > 0) { 
 			$this->mailSubject = ereg_replace( "n", "",$inSubject); 
 			return true; 
 		} 
@@ -129,8 +125,7 @@ class Email {
 	| @param   string   $inText   文本内容 
 	| @return  bool  
 	---------------------------------------------------------------------------------*/  
-	public function setText($inText)
-	{ 
+	public function setText($inText) { 
 		if(strlen(trim($inText)) > 0){ 
 			$this->mailText = $inText; 
 			return true; 
@@ -145,8 +140,7 @@ class Email {
 	| @param   string   $inHTML  html格式邮件主题
 	| @return  bool 
 	---------------------------------------------------------------------------------*/ 
-	public function setHTML($inHTML)
-	{ 
+	public function setHTML($inHTML) { 
 		if(strlen(trim($inHTML)) > 0){
 			$this->mailHTML = $inHTML; 
 			return true; 
@@ -161,8 +155,7 @@ class Email {
 	| @param   string   $inAttachments 目录的字符串,也可以包涵多个文件用逗号进行分割 
 	| @return  bool
 	---------------------------------------------------------------------------------*/ 
-	public function setAttachments($inAttachments)
-	{
+	public function setAttachments($inAttachments) {
 		if(strlen(trim($inAttachments)) > 0){ 
 			$this->mailAttachments = $inAttachments; 
 			return true; 
@@ -174,8 +167,7 @@ class Email {
         /*---------------------------------------------------------------------------------
 	| 于检查email地址的合法性  
 	---------------------------------------------------------------------------------*/ 
-	public function checkEmail($inAddress)
-	{ 
+	public function checkEmail($inAddress) { 
 		return (
 			ereg( "^[^@ ]+@([a-zA-Z0-9-]+.)+([a-zA-Z0-9-]{2}|net|com|gov|mil|org|edu|int)$",$inAddress)
 		); 
@@ -188,8 +180,7 @@ class Email {
 	| @param  string   $inHash           用于存储临时的值
 	| @param  string   $inFormat         用于放置邮件主体
 	--------------------------------------------------------------------------------------*/ 
-	public function loadTemplate($inFileLocation,$inHash,$inFormat)
-	{ 
+	public function loadTemplate($inFileLocation,$inHash,$inFormat) { 
 		/* 比如邮件内有如下内容:  Dear ~!UserName~, 
 								  Your address is ~!UserAddress~ 
 		   其中”~!”为起始标志”~”为结束标志 			  
@@ -233,8 +224,7 @@ class Email {
 	| @param  int   $offset    为整数 – 用于多管道的调用
 	| @param  string   一个md5()编码的字串
 	---------------------------------------------------------------------------------*/
-	public function getRandomBoundary($offset = 0)
-	{ 
+	public function getRandomBoundary($offset = 0) { 
 		//--随机数生成 
 		srand(time()+$offset);
 		//--返回 md5 编码的32位 字符长度的字串 
@@ -244,8 +234,7 @@ class Email {
         /*---------------------------------------------------------------------------------
 	| 用于判断附件的类型 
 	---------------------------------------------------------------------------------*/ 
-	public function getContentType($inFileName)
-	{ 
+	public function getContentType($inFileName) { 
 		//--去除路径 
 		$inFileName = basename($inFileName); 
 
@@ -273,8 +262,7 @@ class Email {
         /*---------------------------------------------------------------------------------
 	| 把文本内容加上text的文件头 
 	---------------------------------------------------------------------------------*/  
-	public function formatTextHeader()
-	{ 
+	public function formatTextHeader() { 
 		$outTextHeader = ""; 
 		$outTextHeader .= "Content-Type: text/plain;charset=us-asciin"; 
 		$outTextHeader .= "Content-Transfer-Encoding: 7bitnn"; 
@@ -285,8 +273,7 @@ class Email {
         /*---------------------------------------------------------------------------------
 	| 把邮件主体内容加上html的文件头  
 	---------------------------------------------------------------------------------*/ 
-	public function formatHTMLHeader()
-	{ 
+	public function formatHTMLHeader() { 
 		$outHTMLHeader 	= ""; 
 		$outHTMLHeader .= "Content-Type: text/html;charset=us-asciin"; 
 		$outHTMLHeader .= "Content-Transfer-Encoding: 7bitnn"; 
@@ -297,8 +284,7 @@ class Email {
         /*---------------------------------------------------------------------------------
 	| 把邮件中的附件标识出来  
 	---------------------------------------------------------------------------------*/ 
-	public function formatAttachmentHeader($inFileLocation)
-	{ 
+	public function formatAttachmentHeader($inFileLocation) { 
 		$outAttachmentHeader = ""; 
 
 		//--用上面的函数getContentType($inFileLocation)得出附件类型 
@@ -335,8 +321,7 @@ class Email {
         /*---------------------------------------------------------------------------------
 	| 发送邮件，发送成功返回值为true  
 	---------------------------------------------------------------------------------*/ 
-	public function send()
-	{ 
+	public function send() { 
 		//--设置邮件头为空 
 		$mailHeader = ""; 
 
@@ -410,4 +395,3 @@ class Email {
 		return false; 
 	} 
 } 
-?> 
