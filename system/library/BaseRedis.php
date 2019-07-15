@@ -27,8 +27,8 @@ namespace app\system\library;
 class BaseRedis
 {
     private $_redis;                         //redis对象
-    public $_isConnectOk = true;             //是否连接成功，成功为true，失败为false
-    private static $_instance  = array();    //本类实例
+    public $_isConnectOk = false;             //是否连接成功，成功为true，失败为false
+    private static $_instance  = [];    //本类实例
     private static $_cacheTime = 300;        //超时缓冲时间
     private $config;
     
@@ -51,10 +51,6 @@ class BaseRedis
                 $this->_isConnectOk = $this->_redis->auth($config['auth']);
             }
         } catch (\Exception $e) {
-            $this->_isConnectOk = false;
-        }
-
-        if (!$this->_isConnectOk) {
             error_log('[' . date('Y-m-d H:i:s') . '] redis连接失败，请维护人员检查!');
         }
     }

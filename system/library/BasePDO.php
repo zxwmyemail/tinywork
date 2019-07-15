@@ -10,7 +10,7 @@ class BasePDO {
   
     private $_pdo = null;                        // pdo实例
     private $_pdoStmt = null;                    // pdo执行资源实例 
-    public $_isConnectOk = true;                 // 是否连接成功，true为成功，false为失败
+    public $_isConnectOk = false;                 // 是否连接成功，true为成功，false为失败
     private static $_pdoInstance = array();      // 单例模式，保存本类实例       
 
 
@@ -31,11 +31,9 @@ class BasePDO {
     --------------------------------------------------------------------------------------- */ 
     private function __construct($pdoConfig = '') {  
 	    if (!class_exists('PDO')) {
-            $this->_isConnectOk = false;
             error_log('[' . date('Y-m-d H:i:s') . '] 环境不支持PDO连接，请维护人员检查!');
         } else {
             if (empty($pdoConfig) || !is_array($pdoConfig)) {
-                $this->_isConnectOk = false;
                 error_log('[' . date('Y-m-d H:i:s') . '] PDO连接参数为空，请维护人员检查!');
             } else {
                 try {
@@ -45,9 +43,9 @@ class BasePDO {
                         $this->_pdo->setAttribute(\PDO::ATTR_PERSISTENT, TRUE); 
                     }
                     $this->_pdo->query('SET NAMES ' . $pdoConfig['dbcharset']);
+                    $this->_isConnectOk = true;
                 } catch (\PDOException $e) {  
                     error_log('[' . date('Y-m-d H:i:s') . '] mysqlPDO连接数据库失败，请维护人员检查!');
-                    $this->_isConnectOk = false;
                 }
                 unset($pdoConfig); 
             }
