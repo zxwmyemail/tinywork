@@ -13,14 +13,17 @@ tinywork - 基于MVC的php框架
 ```php
   | — web                       web入口文件和静态资源所在文件夹
        | —— index.php               web入口文件
-       | —— resource                静态资源所在文件夹
+       | —— asset                   静态资源所在文件夹
             | ——— css                   css文件存放位置 
             | ——— js                    js文件存放位置
             | ——— images                images文件存放位置
             | ——— font                  font文件存放位置
   | — config                    存放配置文件  
-      | —— const.config.php         系统预定义常量 
-      | —— params.config.php        系统参数配置文件
+      | —— const.php                 系统预定义常量 
+      | —— config.php                系统参数配置文件
+      | —— database.php              mysql数据库连接参数配置文件
+      | —— memcache.php              memcache配置文件
+      | —— redis.php                 redis配置文件 
   | — log                       日志文件夹
       | —— sys_log                  系统日志
       | —— app_log                  程序日志
