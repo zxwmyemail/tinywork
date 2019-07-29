@@ -25,9 +25,10 @@ tinywork - 基于MVC的php框架
       | —— sys_log                  系统日志
       | —— app_log                  程序日志
   | — mvc                       框架的mvc层
-      | —— controller               控制器文件  
-      | —— model                    模型文件  
-      | —— view                     视图文件     
+      | —— home                     默认为home模块
+          | ——— controller              控制器文件  
+          | ——— model                   模型文件  
+          | ——— view                    视图文件     
   | — extend                    存放扩展类库  
   | — system                    系统目录 
       | —— core                     系统核心类，例如控制层父类，model层父类、路由类
